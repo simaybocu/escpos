@@ -2,7 +2,6 @@ package escpos
 
 import (
 	"bufio"
-	"bytes"
 	"fmt"
 	"image"
 	"io"
@@ -435,14 +434,7 @@ func (e *Escpos) MotionUnits(x, y uint8) (int, error) {
 
 // Feeds the paper to the end and performs a Cut. In the ESC/POS Command Manual there is also PartialCut and FullCut documented, but it does exactly the same.
 func (e *Escpos) Cut() (int, error) {
-	PAPER_PART_CUT := bytes.NewBuffer([]byte{0x1d, 0x56, 0x01})
-	PAPER_PART_CUT_BYTES := PAPER_PART_CUT.Bytes()
-
-	GS := []byte{'V', 'A', '0'}
-
-	ESCPOS_CUT := append(GS, PAPER_PART_CUT_BYTES...)
-
-	return e.WriteRaw(ESCPOS_CUT)
+	return e.WriteRaw([]byte{esc, 'm'})
 }
 
 // Helpers
