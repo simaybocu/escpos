@@ -434,7 +434,9 @@ func (e *Escpos) MotionUnits(x, y uint8) (int, error) {
 
 // Feeds the paper to the end and performs a Cut. In the ESC/POS Command Manual there is also PartialCut
 func (e *Escpos) Cut() (int, error) {
-	return e.WriteRaw([]byte{esc, 'm'})
+	// PAPER_PART_CUT := bytes.NewBuffer([]byte{0x1d, 0x56, 0x01})
+	// PAPER_PART_CUT_BYTES := PAPER_PART_CUT.Bytes()
+	return e.WriteRaw([]byte{0x1d, 0x56, 0x01})
 }
 
 // Helpers
