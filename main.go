@@ -68,8 +68,10 @@ func (e *Escpos) Print() error {
 
 // Sends the buffered data to the printer and performs a cut
 func (e *Escpos) PrintAndCut() error {
-	e.Cut()
-	e.End()
+	_, err := e.Cut()
+	if err != nil {
+		return fmt.Errorf("failed to write to buffer: %v", err)
+	}
 	return e.dst.Flush()
 }
 
@@ -430,13 +432,9 @@ func (e *Escpos) MotionUnits(x, y uint8) (int, error) {
 	return e.WriteRaw([]byte{gs, 'P', x, y})
 }
 
-// Feeds the paper to the end and performs a Cut. In the ESC/POS Command Manual there is also PartialCut
-func (e *Escpos) Cut() {
-	e.Write("\x1DVA0")
-}
-
-func (e *Escpos) End() {
-	e.Write("\xFA")
+// Feeds the paper to the end and performs a Cut. In the ESC/POS Command Manual there is also PartialCut and FullCut documented, but it does exactly the same.
+func (e *Escpos) Cut() (int, error) {
+	return e.WriteRaw([]byte{0x1b, 0x64, 0x04, 0x1b, 0x64, 0x04, 0x1d, 0x56, 0x00, 0x1b, 0x40})
 }
 
 // Helpers
